@@ -69,6 +69,22 @@ class Message {
   }
 }
 
+//grouochat needs people
+class Groupchat {
+  constructor(user){
+    this.admin = user
+    this.users = [user]
+    this.chatbox = []
+  }
+  addUser(user) {
+    this.users.push(user)
+    return `${user.name} joined the chat`
+  }
+  kickUser(user) {
+    this.users.splice(users.indexOf(user))
+  }
+}
+
 let user1 = new User('Michael')
 let user2 = new User('Ryan')
 user1.sendMessage(user2, 'hey buddy')
