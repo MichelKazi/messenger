@@ -11,6 +11,7 @@ class User {
     this.inbox = []
     this.outbox = []
     this.blocklist = []
+    this.groupConvos = [] // in case user is in many groupchats
   }
 
   sendMessage(receiver, content) {
@@ -23,11 +24,12 @@ class User {
     receiver.inbox.push(message)
     return `Your message to ${receiver.name} is sent`
   }
+
   //when a message is read, that object's read value is changed to true, and a read receipt is provided
   readMessage(i){
-    let date = new Date()
+    let time = Date().toLocaleTimeString('en-US')
     if (this.inbox[i].read === false){
-      this.inbox[i].readReceipt = `Read at ${date.toLocaleTimeString('en-US')}`
+      this.inbox[i].readReceipt = `Read at ${time}`
       this.inbox[i].read = true
     }
     return this.inbox[i].content
@@ -53,6 +55,29 @@ class User {
     } );
   }
 
+  filterRead(){
+    return this.inbox.filter(msg => {
+      return msg.read === true
+    } );
+  }
+
+  createGroupChat(name, user) {
+    let chat = new Groupchat(name, user)
+    this.groupConvos.push(chat)
+    chat.users.shift(this)
+    return `${chat.name} was created`
+  }
+
+  groupMessage(groupchat, content) {
+    if (groupchat.users.includes(this)) {
+      let time = Date().toLocaleTimeString('en-US')
+      let msg = new Message(groupchat, content)
+      groupchat.chatbox.push(`${this.name}:\n${content}\n${time}\n\n`)
+      return `Your message was sent in ${groupchat.name}`
+    }
+    return `You're not in this chat!`
+  }
+
   block(user){
     this.blocklist.push(user)
     return `you blocked ${user.name}!`
@@ -69,19 +94,33 @@ class Message {
   }
 }
 
-//grouochat needs people
+//groupchat needs a name and people
 class Groupchat {
-  constructor(user){
-    this.admin = user
+  constructor(name, user){
+    this.name = name
     this.users = [user]
     this.chatbox = []
+  }
+  displayMessages() {
+    console.log(`----${this.name}----`);
+    for (msg in this.chatbox) {
+      console.log(msg);
+    }
+  }
+  displayUsers() {
+    for (u in this.users)
+      console.log(`Users: ${u.name}`);
   }
   addUser(user) {
     this.users.push(user)
     return `${user.name} joined the chat`
   }
   kickUser(user) {
-    this.users.splice(users.indexOf(user))
+    if (users.includes(user)){
+      this.users.splice(users.indexOf(user))
+      return `${user.name} has left the chat`
+    }
+    return `${user.name} is not in this chat`
   }
 }
 
