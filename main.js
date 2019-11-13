@@ -4,6 +4,7 @@
 
 //user.inbox --> that person's messages
 // user.sendMessage('Ryan', 'hello')
+
 class User {
   constructor(name) {
     this.name = name
@@ -21,14 +22,17 @@ class User {
     receiver.inbox.push(message)
     return `Your message to ${receiver.name} is sent`
   }
-
+  //when a message is read you can
   readMessage(i){
-    this.inbox[i].isRead = true
+    let date = new Date()
+    this.inbox[i].read = true
+    this.inbox[i].readReceipt = `Read at ${date.toLocaleTimeString('en-US')}`
     return this.inbox[i].content
   }
 
-  readLastMessage(){
-    return this.inbox.peek()
+  unreadMessage(i){
+    this.inbox[i].read = false
+    this.inbox[i].readReceipt = ''
   }
 
   block(user){
@@ -42,12 +46,16 @@ class Message {
   constructor(receiver, content) {
     this.receiver = receiver
     this.content = content
-    this.isRead = false
+    this.read = false
+    this.readReceipt = ''
   }
 }
 
 let user1 = new User('Michael')
 let user2 = new User('Ryan')
+user1.sendMessage(user2, 'hey buddy')
+user1.sendMessage(user2, 'hey please respond')
+
 
 // any object based on a class is called an instance
 // an instance represents one object based on the class name
