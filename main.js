@@ -18,11 +18,12 @@ class User {
       return `Your message to ${receiver.name} could not be sent!`
     }
     let message = new Message(receiver, content)
+    message.readReceipt = 'Delivered'
     this.outbox.push(message)
     receiver.inbox.push(message)
     return `Your message to ${receiver.name} is sent`
   }
-  //when a message is read you can
+  //when a message is read, that object's read value is changed to true, and a read receipt is provided
   readMessage(i){
     let date = new Date()
     if (this.inbox[i].read === false){
@@ -31,6 +32,7 @@ class User {
     }
     return this.inbox[i].content
   }
+
   readLastMessage(i){
     let date = new Date()
     if (this.inbox[this.inbox.length-1].read === false){
@@ -43,6 +45,12 @@ class User {
   unreadMessage(i){
     this.inbox[i].read = false
     this.inbox[i].readReceipt = ''
+  }
+
+  filterUnread(){
+    return this.inbox.filter(msg => {
+      return msg.read === false
+    } );
   }
 
   block(user){
@@ -65,6 +73,7 @@ let user1 = new User('Michael')
 let user2 = new User('Ryan')
 user1.sendMessage(user2, 'hey buddy')
 user1.sendMessage(user2, 'hey please respond')
+user2.readLastMessage()
 
 
 // any object based on a class is called an instance
