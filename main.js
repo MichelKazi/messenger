@@ -13,22 +13,27 @@ class User {
   }
 
   sendMessage(receiver, content) {
+    if (receiver.blocklist.includes(this)) {
+      return `Your message to ${receiver.name} could not be sent!`
+    }
     let message = new Message(receiver, content)
     this.outbox.push(message)
     receiver.inbox.push(message)
-    return `your message to ${receiver.name} is sent`
+    return `Your message to ${receiver.name} is sent`
   }
 
   readMessage(i){
+    this.inbox[i].isRead = true
     return this.inbox[i].content
   }
 
   readLastMessage(){
-    return this.inbox.peekBack()
+    return this.inbox.peek()
   }
 
   block(user){
-    
+    this.blocklist.push(user)
+    return `you blocked ${user.name}!`
   }
 
 }
@@ -37,6 +42,7 @@ class Message {
   constructor(receiver, content) {
     this.receiver = receiver
     this.content = content
+    this.isRead = false
   }
 }
 
