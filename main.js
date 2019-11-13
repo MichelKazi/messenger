@@ -25,9 +25,19 @@ class User {
   //when a message is read you can
   readMessage(i){
     let date = new Date()
-    this.inbox[i].read = true
-    this.inbox[i].readReceipt = `Read at ${date.toLocaleTimeString('en-US')}`
+    if (this.inbox[i].read === false){
+      this.inbox[i].readReceipt = `Read at ${date.toLocaleTimeString('en-US')}`
+      this.inbox[i].read = true
+    }
     return this.inbox[i].content
+  }
+  readLastMessage(i){
+    let date = new Date()
+    if (this.inbox[this.inbox.length-1].read === false){
+      this.inbox[this.inbox.length-1].readReceipt = `Read at ${date.toLocaleTimeString('en-US')}`
+      this.inbox[this.inbox.length-1].read = true
+    }
+    return this.inbox[this.inbox.length-1].content
   }
 
   unreadMessage(i){
