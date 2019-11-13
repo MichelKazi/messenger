@@ -4,9 +4,12 @@
 
 //user.inbox --> that person's messages
 // user.sendMessage('Ryan', 'hello')
+let convos = []
+
 
 class User {
   constructor(name) {
+    this.id = convos.length+1
     this.name = name
     this.inbox = []
     this.outbox = []
@@ -61,15 +64,14 @@ class User {
     } );
   }
 
-  createGroupChat(name, user) {
-    let chat = new Groupchat(name, user)
-    this.groupConvos.push(chat)
+  createGroupChat(name, user) { 
+    convos.push(new Groupchat(name, user))
     chat.users.shift(this)
-    return `${chat.name} was created`
+    return `${chat.name} was created with the ID of ${chat.id}`
   }
 
-  groupMessage(groupchat, content) {
-    if (groupchat.users.includes(this)) {
+  groupMessage(chatID, content) {
+    if (convos[chatID].users.includes(this)) {
       let time = Date().toLocaleTimeString('en-US')
       let msg = new Message(groupchat, content)
       groupchat.chatbox.push(`${this.name}:\n${content}\n${time}\n\n`)
@@ -113,10 +115,12 @@ class Groupchat {
   }
   addUser(user) {
     this.users.push(user)
+    user.groupConvos.push(this)
     return `${user.name} joined the chat`
   }
   kickUser(user) {
     if (users.includes(user)){
+      users.groupConvos.splice(users.groupConvos.indexOf(this))
       this.users.splice(users.indexOf(user))
       return `${user.name} has left the chat`
     }
@@ -126,9 +130,12 @@ class Groupchat {
 
 let user1 = new User('Michael')
 let user2 = new User('Ryan')
+let user3 = new User('Kevin')
 user1.sendMessage(user2, 'hey buddy')
 user1.sendMessage(user2, 'hey please respond')
 user2.readLastMessage()
+user1.createGroupChat('Cool chat', user2)
+
 
 
 // any object based on a class is called an instance
